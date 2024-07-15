@@ -41,4 +41,6 @@ npx react-native run-android
 - **Social Sharing:** Share items to seek feedback from friends, creating an engaging and social shopping experience.
 
 ## Snippets
-![Screenshot_1721047388](https://github.com/user-attachments/assets/c52c171e-0476-40f7-b993-7b7ef6d34d94)
+ <img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047388.png" alt="Product Display" width="300">
+  <img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047393.png" alt="Product Display" width="300">
+
