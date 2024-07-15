@@ -2,7 +2,7 @@
 
 ## Overview
 
-Cat-alogue is a unique shopping experience that integrates a swipe-based interface to create a seamless and engaging user interaction. Utilizing a trained Machine Learning (ML) model, the app curates personalized recommendations based on user preferences, making the shopping experience intuitive and enjoyable. Users can swipe right to like an item and left to pass, while a recommendation engine curates a personalized feed.
+Cat-alogue is a unique shopping experience that integrates a swipe-based interface to create a seamless and engaging user interaction. Utilizing a trained Machine Learning model, the app curates personalized recommendations based on user preferences, making the shopping experience intuitive and enjoyable. Users can swipe right to like an item and left to pass, while a recommendation engine curates a personalized feed.
 
 ## Features
 
@@ -42,7 +42,7 @@ npx react-native run-android
 
 ## Snippets
 
-<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047388.png" alt="Product Display" width="300">&nbsp;&nbsp;<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047393.png" alt="Product Display" width="300">
+<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047388.png" alt="Product Display" width="300">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047393.png" alt="Product Display" width="300">
 
 
 
