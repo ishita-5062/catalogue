@@ -42,6 +42,6 @@ npx react-native run-android
 
 ## Snippets
 
-<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047388.png" alt="Product Display" width="350"> <img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047393.png" alt="Right Swipe" width="350">
+<img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047388.png" alt="Product Display" width="350">        <img src="https://github.com/ishita-5062/catalogue/blob/main/Screenshot_1721047393.png" alt="Right Swipe" width="350">
 
 
