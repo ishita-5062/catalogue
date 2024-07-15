@@ -39,3 +39,6 @@ npx react-native run-android
 - **Daily Swipe Streaks:** Incentives for users to visit the app daily.
 - **Shared Moodboards:** Create collaborative moodboards with friends for events, vacations, or fashion inspiration.
 - **Social Sharing:** Share items to seek feedback from friends, creating an engaging and social shopping experience.
+
+## Snippets
+![Screenshot_1721047388](https://github.com/user-attachments/assets/c52c171e-0476-40f7-b993-7b7ef6d34d94)
