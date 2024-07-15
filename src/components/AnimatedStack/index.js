@@ -3,6 +3,7 @@ import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Card from '../Card';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, useAnimatedGestureHandler, useDerivedValue, interpolate, runOnJS } from 'react-native-reanimated';
+import { getMostSimilarIndex } from './recommendationUtils';
 
 const ROTATION = 60;
 const SWIPE_VELOCITY = 800;
@@ -52,30 +53,58 @@ const AnimatedStack = (props) => {
     ],
   }));
 
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (_, context) => {
-      context.startX = translateX.value;
-    },
-    onActive: (event, context) => {
-      translateX.value = context.startX + event.translationX;
-    },
-    onEnd: (event) => {
-      if (Math.abs(event.velocityX) < SWIPE_VELOCITY) {
-        translateX.value = withSpring(0);
-        return;
-      }
+  const onSwipe = (direction: 'left' | 'right') => {
+    const newCurrentIndex = nextIndex;
+    let newNextIndex;
 
-      translateX.value = withSpring(hiddenTranslateX * Math.sign(event.velocityX),
-        {},
-        () => runOnJS(setCurrentIndex)(currentIndex + 1),
-      );
-    },
-  });
+    if (direction === 'right') {
+      // User liked the item, get the most similar item
+      newNextIndex = getMostSimilarIndex(currentIndex, stylesData.length);
+    } else {
+      // User disliked the item, move to the next one
+      newNextIndex = (nextIndex + 1) % stylesData.length;;
+    }
 
-  useEffect(() => {
-    translateX.value = 0;
-    setNextIndex(currentIndex + 1);
-  }, [currentIndex]);
+    const newSecondNextIndex = (newNextIndex + 1) % stylesData.length;
+
+    setCurrentIndex(newCurrentIndex);
+    setNextIndex(newNextIndex);
+  };
+
+    const gestureHandler = useAnimatedGestureHandler({
+      onStart: (_, context) => {
+        context.startX = translateX.value;
+      },
+      onActive: (event, context) => {
+        translateX.value = context.startX + event.translationX;
+      },
+      onEnd: (event) => {
+        if (Math.abs(event.velocityX) < SWIPE_VELOCITY) {
+          translateX.value = withSpring(0);
+          return;
+        }
+
+        const direction = event.velocityX > 0 ? 'right' : 'left'; //new line added
+
+        runOnJS(onSwipe)(direction)
+
+        translateX.value = withSpring(
+          hiddenTranslateX * Math.sign(event.velocityX),
+          {},
+          () => {
+            runOnJS(() => {
+              translateX.value = 0;
+            })();
+          }
+        );
+      },
+    });
+
+    useEffect(() => {
+      translateX.value = 0;
+//      removed set next index
+//    setNextIndex(currentIndex + 1);
+    }, [currentIndex]);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

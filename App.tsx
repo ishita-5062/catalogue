@@ -7,6 +7,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withSpring, useAnimatedGest
 import Card from './src/components/Card'; // Adjust path as needed
 import stylesData from './myntradataset/styles.json'; // Adjust path as needed
 import imageMap from './android/app/src/main/assets/imageMap.js'; // Adjust path as needed
+import { getMostSimilarIndex } from './src/components/utils/recommendationUtils'; // Import the recommendation function
 
 const ROTATION = 60;
 const SWIPE_VELOCITY = 800;
@@ -53,6 +54,22 @@ const App = () => {
     ],
   }));
 
+   const onSwipe = (direction: 'left' | 'right') => {
+     const newCurrentIndex = nextIndex;
+     let newNextIndex;
+
+     if (direction === 'right') {
+       // User liked the item, get the most similar item
+       newNextIndex = getMostSimilarIndex(currentIndex, stylesData.length);
+     } else {
+       // User disliked the item, move to the next one
+       newNextIndex = (nextIndex + 1) % stylesData.length;
+     }
+
+     setCurrentIndex(newCurrentIndex);
+     setNextIndex(newNextIndex);
+   };
+
   const gestureHandler = useAnimatedGestureHandler({
     onStart: (_, context) => {
       context.startX = translateX.value;
@@ -66,15 +83,21 @@ const App = () => {
         return;
       }
 
-      translateX.value = withSpring(hiddenTranslateX * Math.sign(event.velocityX), {}, () => {
-        runOnJS(setCurrentIndex)(currentIndex + 1);
-      });
+      const direction = event.velocityX > 0 ? 'right' : 'left';
+      translateX.value = withSpring(
+          hiddenTranslateX * Math.sign(event.velocityX),
+          {},
+          () => {
+                    runOnJS(onSwipe)(direction);
+                  }
+    );
     },
   });
 
   useEffect(() => {
     translateX.value = 0;
-    setNextIndex(currentIndex + 1);
+//     removed this line
+//     setNextIndex(currentIndex + 1);
   }, [currentIndex]);
 
   return (
