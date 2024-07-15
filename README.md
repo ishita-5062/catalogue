@@ -22,15 +22,18 @@ Clone this repository to your local machine:
 
 ```bash
 git clone https://github.com/ishita-5062/catalogue.git
+```
 
 Install Required Dependencies
 Before running the application, you'll need to install the required dependencies:
 
 ```bash
 npm install
+```
 
 ```bash
 npx react-native run-android
+```
 
 ## Upcoming Features
 - **Daily Swipe Streaks:** Incentives for users to visit the app daily.
