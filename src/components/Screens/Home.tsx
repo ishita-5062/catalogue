@@ -11,9 +11,27 @@ import { getMostSimilarIndex, addToVisitedSet, clearVisitedSet } from '../utils/
 import { useCart } from '../CartContext';  // Import the useCart hook
 import ConditionalBottomBar from './ConditionalBottomBar'
 
+import axios from 'axios';
+
 const ROTATION = 60;
 const SWIPE_VELOCITY = 800;
 const UPWARD_SWIPE_THRESHOLD = -200; // Adjust as needed
+
+const handleSwipeRight = async (productId: number) => {
+  try {
+    const response = await axios.post('http://10.0.2.2:3001/api/updateSwipeCount', {
+      productId,
+    });
+
+    console.log('Swipe count updated:', response.data);
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error updating swipe count:', error.response?.data || error.message);
+    } else {
+      console.error('Unexpected error:', error);
+    }
+  }
+};
 
 const Home = () => {
   const { addToCart } = useCart();
@@ -22,7 +40,7 @@ const Home = () => {
 
   const currProduct = stylesData[currentIndex];
   const nextProduct = stylesData[nextIndex];
-const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const hiddenTranslateX = 2 * screenWidth;
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -72,6 +90,7 @@ const nextCardStyle = useAnimatedStyle(() => ({
 
       if (direction === 'right') {
         newNextIndex = getMostSimilarIndex(currentIndex, stylesData.length);
+        handleSwipeRight(currProduct.id);
       } else if (direction === 'left') {
         newNextIndex = (nextIndex + 1) % stylesData.length;
       } else if (direction === 'up') {

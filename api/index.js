@@ -3,10 +3,9 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
 const cors = require("cors");
-//const nodemailer = require("nodemailer");
 
 const { createUser, User } = require('./models/User.js');
-//const  = require("./models/User");
+const Product = require('./models/Product.js')
 
 const app = express();
 const port = 3001;
@@ -24,17 +23,6 @@ mongoose.connect("mongodb+srv://saachi2222:catalogue@cluster1.xlqon5w.mongodb.ne
 }).catch((error)=>{
     console.log("error connecting to mongodb", error);
 })
-
-//app.post('/api/users', async (req, res) => {
-//  try {
-//    const { email, uid } = req.body;
-//    const newUser = await createUser({ email, firebaseUid: uid });
-//    res.status(201).json(newUser);
-//  } catch (error) {
-//    console.error('Error creating user:', error);
-//    res.status(500).json({ error: 'Failed to create user' });
-//  }
-//});
 
 app.post('/api/users/check-or-create', async (req, res) => {
   try {
@@ -60,6 +48,25 @@ app.post('/api/users/check-or-create', async (req, res) => {
   }
 });
 
+app.post('/api/updateSwipeCount', async (req, res) => {
+  const { productId } = req.body;
+
+  try {
+    const result = await Product.findOneAndUpdate(
+      { id: productId },
+      { $inc: { swipedCount: 1 } },
+      { new: true }
+    );
+
+    if (result) {
+      res.status(200).json({ message: 'Swipe count updated successfully', product: result });
+    } else {
+      res.status(404).json({ message: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating swipe count', error });
+  }
+});
 
 app.listen(port, () => {
     console.log("Server running on port", port);

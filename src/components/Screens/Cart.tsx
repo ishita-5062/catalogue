@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { SafeAreaView, View, Text, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import CartItem from '../CartItem';
-import stylesData from '../../../myntradataset/styles.json';
+// import stylesData from '../../../myntradataset/styles.json';
 import imageMap from '../../../android/app/src/main/assets/imageMap.js';
 import { useCart } from '../CartContext';
 
