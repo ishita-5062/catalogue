@@ -1,33 +1,38 @@
 import React from 'react';
 import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NavigationContainer, useNavigationState } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+
 
 const BottomBar = () =>(
   <View style={styles.bottomBar}>
       <TouchableOpacity style={styles.navButton}>
-        <Image source={require('./assets/images/icons8-play-50.png')} style={styles.navIcon} />
+        <Image source={require('../../../assets/images/icons8-play-50.png')} style={styles.navIcon} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navButton}>
-        <Image source={require('./assets/images/icons8-hashtag-64.png')} style={styles.navIcon} />
+        <Image source={require('../../..//assets/images/icons8-hashtag-64.png')} style={styles.navIcon} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navButton}>
-        <Image source={require('./assets/images/icons8-search-50.png')} style={styles.navIcon} />
+        <Image source={require('../../../assets/images/icons8-search-50.png')} style={styles.navIcon} />
       </TouchableOpacity>
       <TouchableOpacity style={styles.navButton}>
-        <Image source={require('./assets/images/icons8-male-user-30.png')} style={styles.navIcon} />
+        <Image source={require('../../../assets/images/icons8-male-user-30.png')} style={styles.navIcon} />
       </TouchableOpacity>
   </View>
 );
 
 const ConditionalBottomBar = () => {
-  const navigationState = useNavigationState(state => state);
-  const currentRoute = navigationState?.routes[navigationState.index]?.name;
-  const showBottomBar = currentRoute !== 'Login';
-
-  if (!showBottomBar) return null;
-  return (<View>
+//     const route = useRoute();
+//     const currentRoute = route.name;
+//     const showBottomBar = currentRoute !== 'Login';
+//     console.log("currentRoute is", currentRoute);
+//     if (!showBottomBar) return null;
+      return (
+          <View>
              <BottomBar />
-         </View>);
+          </View>
+     );
 };
 
 const styles = StyleSheet.create( {
@@ -51,5 +56,5 @@ bottomBar: {
         height: 30,
       },
   });
-  
+
 export default ConditionalBottomBar;

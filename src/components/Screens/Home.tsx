@@ -8,6 +8,9 @@ import Card from '../Card'; // Adjust path as needed
 import stylesData from '../../../myntradataset/styles.json'; // Adjust path as needed
 import imageMap from '../../../android/app/src/main/assets/imageMap.js'; // Adjust path as needed
 import { getMostSimilarIndex, addToVisitedSet, clearVisitedSet } from '../utils/recommendationUtils';
+import ConditionalBottomBar from './ConditionalBottomBar'
+
+
 const ROTATION = 60;
 const SWIPE_VELOCITY = 800;
 
@@ -123,6 +126,7 @@ const Home = () => {
           </PanGestureHandler>
         )}
       </View>
+      <ConditionalBottomBar />
     </GestureHandlerRootView>
   );
 };
