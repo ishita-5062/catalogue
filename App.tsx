@@ -6,6 +6,7 @@ import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
 import { StackNavigator } from './navigation/StackNavigator';
 import { useNavigation } from '@react-navigation/native';
+import { CartProvider } from './src/components/CartContext';
 
 
 import Home from './src/components/Screens/Home'
@@ -37,6 +38,7 @@ const App = () => {
 
     return(
 
+    <CartProvider>
      <NavigationContainer>
           <GestureHandlerRootView style={{ flex: 1 }}>
                 {/*top navigation */}
@@ -49,6 +51,7 @@ const App = () => {
               <BottomBar/>
           </GestureHandlerRootView>
      </NavigationContainer>
+     </CartProvider>
 
    );
 };
