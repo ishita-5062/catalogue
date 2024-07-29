@@ -60,10 +60,10 @@ const App = () => {
                 console.log('User authenticated. Attempting to check/create user in MongoDB');
                 // Check if user exists in MongoDB and create if not
                 try {
-                    console.log('Making axios request to:', 'http://10.0.2.2:3000/api/users/check-or-create');
+                    console.log('Making axios request to:', 'http://10.0.2.2:3001/api/users/check-or-create');
                     console.log('Request payload:', { email: fb_user.email, uid: fb_user.uid });
 
-                    const response = await axios.post('http://10.0.2.2:3000/api/users/check-or-create', {
+                    const response = await axios.post('http://10.0.2.2:3001/api/users/check-or-create', {
                         email: fb_user.email,
                         uid: fb_user.uid
                     });

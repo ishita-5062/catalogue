@@ -9,7 +9,7 @@ const { createUser, User } = require('./models/User.js');
 //const  = require("./models/User");
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
