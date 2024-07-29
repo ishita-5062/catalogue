@@ -1,14 +1,15 @@
-import React, { useState, useEffect} from 'react';
-import { View, StyleSheet, useWindowDimensions, Alert, Text} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, useWindowDimensions, Alert, Text} from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, useAnimatedGestureHandler, useDerivedValue, interpolate, runOnJS } from 'react-native-reanimated';
 
-// Adjust paths as needed
-import Card from '../Card';
-import stylesData from '../../../myntradataset/styles.json';
-import imageMap from '../../../android/app/src/main/assets/imageMap.js';
-import { getMostSimilarIndex } from '../utils/recommendationUtils';
+// Adjust paths as needed for Card component and data
+import Card from '../Card'; // Adjust path as needed
+import stylesData from '../../../myntradataset/styles.json'; // Adjust path as needed
+import imageMap from '../../../android/app/src/main/assets/imageMap.js'; // Adjust path as needed
+import { getMostSimilarIndex, addToVisitedSet, clearVisitedSet } from '../utils/recommendationUtils';
 import { useCart } from '../CartContext';  // Import the useCart hook
+import ConditionalBottomBar from './ConditionalBottomBar'
 
 const ROTATION = 60;
 const SWIPE_VELOCITY = 800;
@@ -132,6 +133,7 @@ const gestureHandler = useAnimatedGestureHandler({
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      {/* Cards */}
       <View style={styles.pageContainer}>
         {nextProduct && (
           <View style={styles.nextCardContainer}>
@@ -145,7 +147,6 @@ const gestureHandler = useAnimatedGestureHandler({
           <PanGestureHandler onGestureEvent={gestureHandler}>
             <Animated.View style={[styles.animatedCard, cardStyle]}>
               <Card product={currProduct} imageMap={imageMap} />
-              <Text currentIndex/>
               <View style={styles.iconContainer}>
                 <Animated.Image source={require('../../../assets/images/heart.png')} style={[styles.icon, heartStyle]} />
                 <Animated.Image source={require('../../../assets/images/cross.png')} style={[styles.icon, crossStyle]} />
@@ -154,6 +155,7 @@ const gestureHandler = useAnimatedGestureHandler({
           </PanGestureHandler>
         )}
       </View>
+      <ConditionalBottomBar />
     </GestureHandlerRootView>
   );
 };
