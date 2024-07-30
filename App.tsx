@@ -18,6 +18,8 @@ import ConditionalBottomBar from './src/components/Screens/ConditionalBottomBar'
 import {FIREBASE_AUTH} from './firebaseAuth'
 import Login from './src/components/Screens/Login';
 
+import { UserDataProvider, useUserData } from './src/components/utils/UserDataContext';
+
 import axios from 'axios';
 
 enableScreens();
@@ -49,11 +51,11 @@ const AppNavigator = () => (
 
 const App = () => {
     const [fb_user, setUser] = useState<User | null>(null);
-//     console.log('||||||||||||||||||||||||||||||');
+
+
     useEffect(() =>{
         console.log('Effect running');
         onAuthStateChanged(FIREBASE_AUTH, async(fb_user) => {
-//             console.log('user', fb_user);
             console.log('Auth state changed:', fb_user ? 'User logged in' : 'User logged out');
             setUser(fb_user);
             if (fb_user) {
@@ -114,7 +116,6 @@ const App = () => {
 };
 
 const styles = StyleSheet.create( {
-//     {/* topBar styles*/}
 
 
 //     {/* page styles*/}
@@ -122,7 +123,6 @@ const styles = StyleSheet.create( {
         flex: 1,
     },
 
-//     {/* bottomBar styles*/}
 
 });
 

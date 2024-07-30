@@ -24,6 +24,11 @@ mongoose.connect("mongodb+srv://saachi2222:catalogue@cluster1.xlqon5w.mongodb.ne
     console.log("error connecting to mongodb", error);
 })
 
+const getCurrentDateISO = () => {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+};
+
 app.post('/api/users/check-or-create', async (req, res) => {
   try {
     const { email, uid } = req.body;
@@ -65,6 +70,57 @@ app.post('/api/updateSwipeCount', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Error updating swipe count', error });
+  }
+});
+
+app.get('/api/users/:uid', async (req, res) => {
+  try {
+    const user = await User.findOne({ firebaseUid: req.params.uid });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.put('/api/users/:uid', async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { firebaseUid: req.params.uid },
+      req.body,
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.post('/api/users/:uid/extend-streak', async (req, res) => {
+  try {
+    const user = await User.findOne({ firebaseUid: req.params.uid });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    console.log("1");
+//    const currentDate = getCurrentDateISO();
+    const currentDate = new Date();
+//    const lastSwipedDate = user.lastSwiped.toISOString().split('T')[0];
+    const lastSwipedDate = user.lastSwiped;
+    console.log("2");
+
+    if (!user.didSwipe) {
+      user.swipeStreak += 1;
+      user.didSwipe = true;
+      user.lastSwiped = new Date();
+      await user.save();
+    }
+    console.log("3");
+
+    res.json({ message: 'Streak extended successfully', newStreak: user.swipeStreak });
+    console.log("Current Date is", currentDate, 'and user ', user.didSwipe);
+    console.log("User swiped last on",user.lastSwiped," and streak is now", user.swipeStreak);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

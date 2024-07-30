@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, useWindowDimensions, Alert, Text} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, useWindowDimensions, Alert, Text, AppState} from 'react-native';
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, useAnimatedGestureHandler, useDerivedValue, interpolate, runOnJS } from 'react-native-reanimated';
 
@@ -11,6 +11,7 @@ import { getMostSimilarIndex, addToVisitedSet, clearVisitedSet } from '../utils/
 import { useCart } from '../CartContext';  // Import the useCart hook
 import ConditionalBottomBar from './ConditionalBottomBar'
 
+import { FIREBASE_AUTH } from '../../../firebaseAuth';
 import axios from 'axios';
 
 const ROTATION = 60;
@@ -44,6 +45,35 @@ const Home = () => {
   const hiddenTranslateX = 2 * screenWidth;
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+
+  const [streak, setStreak] = useState(0);
+
+  const fetchUserData = async () => {
+    try {
+      const user = FIREBASE_AUTH.currentUser;
+      if (!user) throw new Error('No user logged in');
+
+      const response = await axios.get(`http://10.0.2.2:3001/api/users/${user.uid}`);
+      console.log("Data received", response.data.swipeStreak);
+      setStreak(response.data.swipeStreak);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const handleSwipe = async () => {
+    try {
+      const user = FIREBASE_AUTH.currentUser;
+      if (!user) throw new Error('No user logged in');
+
+      const response = await axios.post(`http://10.0.2.2:3001/api/users/${user.uid}/extend-streak`);
+      setStreak(response.data.newStreak);
+      console.log("Streak set to", response.data.swipeStreak);
+    } catch (error) {
+      console.error('Error extending streak:', error);
+    }
+  };
+
 
   const rotate = useDerivedValue(() =>
     interpolate(translateX.value, [0, hiddenTranslateX], [0, ROTATION]) + 'deg'
@@ -87,6 +117,7 @@ const nextCardStyle = useAnimatedStyle(() => ({
       let newNextIndex;
 
       console.log(direction);
+      handleSwipe();
 
       if (direction === 'right') {
         newNextIndex = getMostSimilarIndex(currentIndex, stylesData.length);
@@ -149,6 +180,141 @@ const gestureHandler = useAnimatedGestureHandler({
     translateY.value = 0;
 //     setNextIndex((currentIndex + 1) % stylesData.length);
   }, [currentIndex]);
+
+    const [currentDate, setCurrentDate] = useState(new Date());
+    const streakLogicExecuted = useRef(false);
+    const appState = useRef(AppState.currentState);
+    const intervalRef = useRef(null);
+
+    useEffect(() => {
+      const checkStreakStatus = async () => {
+        if (streakLogicExecuted.current) return;
+
+        const fb_user = FIREBASE_AUTH.currentUser;
+        if (fb_user) {
+          try {
+            const response = await axios.get(`http://10.0.2.2:3001/api/users/${fb_user.uid}`);
+            const userData = response.data;
+            const currentDate = new Date();
+            const lastSwipedDate = new Date(userData.lastSwiped);
+            const yesterdayDate = new Date(currentDate);
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+
+            // Convert dates to ISO string format (YYYY-MM-DD) for comparison
+//             const currentDateISO = currentDate.toISOString().split('T')[0];
+//             const lastSwipedDateISO = lastSwipedDate.toISOString().split('T')[0];
+//             const yesterdayDateISO = yesterdayDate.toISOString().split('T')[0];
+
+            const currentDateISO = currentDate;
+            const lastSwipedDateISO = lastSwipedDate;
+            const yesterdayDateISO = yesterdayDate;
+
+            const twoMinutesInMilliseconds = 2 * 60 * 1000; // 5 minutes in milliseconds
+            const fiveMinutesInMilliseconds = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+            const differenceInMilliseconds_lastSwiped = currentDate - lastSwipedDate;
+//             const differenceInMilliseconds_lastSwiped = currentDate - lastSwipedDate;
+
+
+            console.log("Today =>", currentDateISO);
+            console.log("Yesterday =>", yesterdayDateISO);
+            console.log("lastSwiped =>", lastSwipedDateISO);
+
+            let updateData = {};
+//             if (lastSwipedDateISO !== currentDateISO) {
+//               // Reset didSwipe for the new day
+//               updateData.didSwipe = false;
+//
+//               if (lastSwipedDateISO < yesterdayDateISO) {
+//                 // If last swipe was before yesterday, reset streak
+//                 updateData.swipeStreak = 0;
+//                 console.log("User did not swipe yesterday!");
+//               }
+//               else{
+//                   console.log("User swiped yesterday!");
+//               }
+//             }
+
+//          TEMPORARYYYYY
+            if (differenceInMilliseconds_lastSwiped > twoMinutesInMilliseconds) {
+              // Reset didSwipe for the new day
+              updateData.didSwipe = false;
+              console.log("Set did swipe to false");
+
+              if (differenceInMilliseconds_lastSwiped > fiveMinutesInMilliseconds) {
+                // If last swipe was before yesterday, reset streak
+                updateData.swipeStreak = 0;
+                console.log("User did not swipe yesterday!");
+              }
+              else{
+                  console.log("User swiped yesterday!");
+              }
+            }
+
+
+            if (Object.keys(updateData).length > 0) {
+              await axios.put(`http://10.0.2.2:3001/api/users/${fb_user.uid}`, updateData);
+            }
+            else{
+                console.log("User has already swiped today!");
+            }
+          } catch (error) {
+            console.error('Error checking user streak status:', error);
+          }
+        }
+
+        streakLogicExecuted.current = true;
+      };
+
+//     const handleAppStateChange = (nextAppState) => {
+//       if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+//         const newDate = new Date();
+//         if (newDate.toDateString() !== currentDate.toDateString()) {
+//           setCurrentDate(newDate);
+//           streakLogicExecuted.current = false; // Reset this so logic runs again on date change
+//         }
+//       }
+//       appState.current = nextAppState;
+//     };
+
+
+//     TEMPORARYYYYY
+    const handleAppStateChange = (nextAppState) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        // App has come to the foreground
+        checkStreakStatus();
+      }
+      appState.current = nextAppState;
+    };
+
+      checkStreakStatus();
+
+//       TEMPORARYYYYY
+    console.log("Defining Interval!");
+    const intervalId = setInterval(() => {
+      console.log("Checking streak status (2-minute interval)");
+      streakLogicExecuted.current = false;
+      checkStreakStatus();
+      console.log("function called");
+    }, 2 * 60 * 1000);
+    // Set up AppState listener
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      clearInterval(intervalId);
+      subscription.remove(); // This correctly removes the event listener
+    };
+
+    }, []);
+
+    useEffect(() => {
+        console.log("Reaching here!");
+       fetchUserData();
+     }, []);
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
