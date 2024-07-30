@@ -12,6 +12,9 @@ const TopBar = () => {
         <Image source={require('../../../assets/images/logo.png')} style={styles.logo} />
       </TouchableOpacity>
       <View style={styles.iconsContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('Streak')}>
+            <Image source={require('../../../assets/images/flame.png')} style={styles.topStreakBarIcon} />
+        </TouchableOpacity>
         <TouchableOpacity>
           <Image source={require('../../../assets/images/heart-icon.png')} style={styles.topBarIcon} />
         </TouchableOpacity>
@@ -46,6 +49,12 @@ const styles = StyleSheet.create({
           height: 30,
           marginLeft: 10,
       },
+
+      topStreakBarIcon: {
+                width: 30,
+                height: 35,
+                marginLeft: 10,
+            },
 });
 
 export default TopBar;

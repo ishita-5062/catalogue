@@ -13,6 +13,8 @@ import {User, onAuthStateChanged} from 'firebase/auth';
 
 import Home from './src/components/Screens/Home'
 import Cart from './src/components/Screens/Cart'
+import Streak from './src/components/Screens/Streak'
+
 import TopBar from './src/components/Screens/TopBar'
 import ConditionalBottomBar from './src/components/Screens/ConditionalBottomBar'
 import {FIREBASE_AUTH} from './firebaseAuth'
@@ -45,6 +47,8 @@ const AppNavigator = () => (
   >
     <AppStack.Screen name="Home" component={Home} />
     <AppStack.Screen name="Cart" component={Cart} />
+    <AppStack.Screen name="Streak" component={Streak} />
+
   </AppStack.Navigator>
 
 );
