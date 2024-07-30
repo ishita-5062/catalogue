@@ -8,7 +8,7 @@ const { createUser, User } = require('./models/User.js');
 const Product = require('./models/Product.js')
 
 const app = express();
-const port = 3001;
+const port = 3005;
 
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
@@ -121,6 +121,67 @@ app.post('/api/users/:uid/extend-streak', async (req, res) => {
     console.log("User swiped last on",user.lastSwiped," and streak is now", user.swipeStreak);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+app.get('/api/aggregated-swiped-count', async (req, res) => {
+  try {
+    const [bySubCategory, byGender, byUsage] = await Promise.all([
+      Product.aggregate([
+        {
+          $group: {
+            _id: "$subCategory",
+            totalSwipedCount: { $sum: "$swipedCount" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            subCategory: "$_id",
+            totalSwipedCount: 1
+          }
+        }
+      ]),
+      Product.aggregate([
+        {
+          $group: {
+            _id: "$gender",
+            totalSwipedCount: { $sum: "$swipedCount" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            gender: "$_id",
+            totalSwipedCount: 1
+          }
+        }
+      ]),
+      Product.aggregate([
+        {
+          $group: {
+            _id: "$usage",
+            totalSwipedCount: { $sum: "$swipedCount" }
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            usage: "$_id",
+            totalSwipedCount: 1
+          }
+        }
+      ])
+    ]);
+
+    res.json({
+      bySubCategory,
+      byGender,
+      byUsage
+    });
+  } catch (error) {
+    console.error("Error in getAggregatedSwipedCount:", error);
+    res.status(500).json({ error: 'An error occurred while fetching aggregated data' });
   }
 });
 

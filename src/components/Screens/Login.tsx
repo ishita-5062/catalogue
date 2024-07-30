@@ -8,15 +8,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Switch,
 } from 'react-native';
 import { FIREBASE_AUTH } from '../../../firebaseAuth';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigation } from '@react-navigation/native';
 
 const Login = () =>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
     const [loading, setLoading]= useState(false);
     const auth = FIREBASE_AUTH;
+    const navigation = useNavigation();
+
 
     const signIn = async () => {
         setLoading(true);
@@ -24,6 +29,9 @@ const Login = () =>{
             const response = await signInWithEmailAndPassword (auth, email, password);
             console.log(response);
             alert('Signed In!');
+             if (isAdmin) {
+                navigation.navigate('Admin');
+            }
         }catch(error: any){
             console.log(error);
             alert(`Sign in failed: ${error.message}`);
@@ -40,7 +48,10 @@ const Login = () =>{
         try {
             const response = await createUserWithEmailAndPassword (auth, email, password);
             console.log(response);
-            alert('Check your email!');
+            alert('Your account has been created!');
+            if (isAdmin) {
+                navigation.navigate('Admin');
+            }
         }catch(error: any){
           console.log(error);
             alert(`Sign up failed: ${error.message}`);
@@ -73,6 +84,13 @@ const Login = () =>{
               autoCapitalize="none"
               onChangeText={(text) => setPassword(text)}
             />
+            <View style={styles.adminContainer}>
+                <Text>Admin?</Text>
+                <Switch
+                    value={isAdmin}
+                    onValueChange={setIsAdmin}
+                />
+            </View>
             {loading ? (
               <ActivityIndicator size="large" color="#FF3F6C" />
             ) : (
@@ -142,6 +160,12 @@ const styles = StyleSheet.create({
     color: '#FF3F6C',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  adminContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
   },
 });
 

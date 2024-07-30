@@ -12,7 +12,7 @@ const Streak = () => {
         const user = FIREBASE_AUTH.currentUser;
         if (!user) throw new Error('No user logged in');
 
-        const response = await axios.get(`http://10.0.2.2:3001/api/users/${user.uid}`);
+        const response = await axios.get(`http://10.0.2.2:3005/api/users/${user.uid}`);
         console.log("Data received", response.data.swipeStreak);
         setStreak(response.data.swipeStreak); // Update with actual data
       } catch (error) {

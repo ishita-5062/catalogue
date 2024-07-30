@@ -14,6 +14,7 @@ import {User, onAuthStateChanged} from 'firebase/auth';
 import Home from './src/components/Screens/Home'
 import Cart from './src/components/Screens/Cart'
 import Streak from './src/components/Screens/Streak'
+import Admin from './src/components/Screens/Admin';
 
 import TopBar from './src/components/Screens/TopBar'
 import ConditionalBottomBar from './src/components/Screens/ConditionalBottomBar'
@@ -41,14 +42,21 @@ const AuthNavigator = () => (
 
 const AppNavigator = () => (
   <AppStack.Navigator
-    screenOptions={({ route }) => ({
-      header: (props) => (route.name !== 'Login' ? <TopBar {...props} /> : null),
-    })}
-  >
+      screenOptions={({ route }) => ({
+        header: (props) => {
+          // Hide TopBar for Login and Admin screens
+          if (route.name === 'Login' || route.name === 'Admin') {
+            return null;
+          }
+          // Show TopBar for all other screens
+          return <TopBar {...props} />;
+        },
+      })}
+    >
     <AppStack.Screen name="Home" component={Home} />
     <AppStack.Screen name="Cart" component={Cart} />
     <AppStack.Screen name="Streak" component={Streak} />
-
+    <AppStack.Screen name="Admin" component={Admin} />
   </AppStack.Navigator>
 
 );
@@ -66,10 +74,10 @@ const App = () => {
                 console.log('User authenticated. Attempting to check/create user in MongoDB');
                 // Check if user exists in MongoDB and create if not
                 try {
-                    console.log('Making axios request to:', 'http://10.0.2.2:3001/api/users/check-or-create');
+                    console.log('Making axios request to:', 'http://10.0.2.2:3005/api/users/check-or-create');
                     console.log('Request payload:', { email: fb_user.email, uid: fb_user.uid });
 
-                    const response = await axios.post('http://10.0.2.2:3001/api/users/check-or-create', {
+                    const response = await axios.post('http://10.0.2.2:3005/api/users/check-or-create', {
                         email: fb_user.email,
                         uid: fb_user.uid
                     });

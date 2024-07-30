@@ -20,7 +20,7 @@ const UPWARD_SWIPE_THRESHOLD = -200; // Adjust as needed
 
 const handleSwipeRight = async (productId: number) => {
   try {
-    const response = await axios.post('http://10.0.2.2:3001/api/updateSwipeCount', {
+    const response = await axios.post('http://10.0.2.2:3005/api/updateSwipeCount', {
       productId,
     });
 
@@ -53,7 +53,7 @@ const Home = () => {
       const user = FIREBASE_AUTH.currentUser;
       if (!user) throw new Error('No user logged in');
 
-      const response = await axios.get(`http://10.0.2.2:3001/api/users/${user.uid}`);
+      const response = await axios.get(`http://10.0.2.2:3005/api/users/${user.uid}`);
       console.log("Data received", response.data.swipeStreak);
       setStreak(response.data.swipeStreak);
     } catch (error) {
@@ -66,7 +66,7 @@ const Home = () => {
       const user = FIREBASE_AUTH.currentUser;
       if (!user) throw new Error('No user logged in');
 
-      const response = await axios.post(`http://10.0.2.2:3001/api/users/${user.uid}/extend-streak`);
+      const response = await axios.post(`http://10.0.2.2:3005/api/users/${user.uid}/extend-streak`);
       setStreak(response.data.newStreak);
       console.log("Streak set to", response.data.swipeStreak);
     } catch (error) {
@@ -193,7 +193,7 @@ const gestureHandler = useAnimatedGestureHandler({
         const fb_user = FIREBASE_AUTH.currentUser;
         if (fb_user) {
           try {
-            const response = await axios.get(`http://10.0.2.2:3001/api/users/${fb_user.uid}`);
+            const response = await axios.get(`http://10.0.2.2:3005/api/users/${fb_user.uid}`);
             const userData = response.data;
             const currentDate = new Date();
             const lastSwipedDate = new Date(userData.lastSwiped);
@@ -253,7 +253,7 @@ const gestureHandler = useAnimatedGestureHandler({
 
 
             if (Object.keys(updateData).length > 0) {
-              await axios.put(`http://10.0.2.2:3001/api/users/${fb_user.uid}`, updateData);
+              await axios.put(`http://10.0.2.2:3005/api/users/${fb_user.uid}`, updateData);
             }
             else{
                 console.log("User has already swiped today!");
